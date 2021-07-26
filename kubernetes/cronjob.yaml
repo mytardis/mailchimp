@@ -12,7 +12,7 @@ spec:
           restartPolicy: OnFailure
           containers:
           - name: go
-            image: mytardis/mytardis-mailchimp:latest
+            image: mytardis/mailchimp:latest
             imagePullPolicy: Always
             command:
               - python
