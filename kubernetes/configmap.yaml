@@ -1,0 +1,18 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: mailchimp
+  namespace: mytardis
+data:
+  settings.yaml: |
+    database:
+      host: pgbouncer.postgres.svc.cluster.local
+      port: 5432
+      username: user
+      password: pass
+      database: postgres
+
+    mailchimp:
+      api_key: abcdef123
+      list_id: 123456
+      segment_id: 123456

@@ -1,0 +1,11 @@
+database:
+  host: localhost
+  port: 5432
+  username: user
+  password: password
+  database: postgres
+
+mailchimp:
+  api_key: abcdef123456
+  list_id: 123456
+  segment_id: 123456

@@ -1,0 +1,4 @@
+pyyaml
+psycopg2
+flake8
+git+https://github.com/mailchimp/mailchimp-marketing-python.git
