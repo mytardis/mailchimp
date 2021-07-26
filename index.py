@@ -4,6 +4,7 @@ from datetime import datetime, timedelta
 import hashlib
 import argparse
 import yaml
+import re
 
 from psycopg2 import connect, sql
 from psycopg2.extras import RealDictCursor
@@ -50,7 +51,7 @@ def get_mc_members(list_id, segment_id):
     return sorted(members)
 
 
-def get_db_users(cur, days):
+def get_db_users(cur, days, exclude):
     filters = [
         sql.SQL("is_active = True")
     ]
@@ -68,10 +69,27 @@ def get_db_users(cur, days):
             last_name
         FROM auth_user
         WHERE {}
+        ORDER BY LOWER(email)
     """).format(sql.SQL(" AND ").join(filters))
 
     cur.execute(q)
-    return cur.fetchall()
+    rows = cur.fetchall()
+
+    users = []
+    for row in rows:
+        keep = True
+        for exc in exclude:
+            if re.match(exc, row["email_address"]):
+                keep = False
+                break
+        if keep:
+            users.append({
+                "email_address": row["email_address"],
+                "first_name": row["first_name"],
+                "last_name": row["last_name"]
+            })
+
+    return users
 
 
 args = get_parser().parse_args()
@@ -107,7 +125,7 @@ except Exception as e:
 cur = con.cursor(cursor_factory=RealDictCursor)
 
 print("Reading database...")
-users = get_db_users(cur, args.days)
+users = get_db_users(cur, args.days, settings["exclude"])
 
 print("Closing connection to the database...")
 cur.close()

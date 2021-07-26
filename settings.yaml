@@ -9,3 +9,6 @@ mailchimp:
   api_key: abcdef123456
   list_id: 123456
   segment_id: 123456
+
+exclude:
+  - @example\.com$

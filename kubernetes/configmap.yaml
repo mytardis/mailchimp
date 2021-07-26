@@ -16,3 +16,6 @@ data:
       api_key: abcdef123
       list_id: 123456
       segment_id: 123456
+
+    exclude:
+      - @example\.com$
