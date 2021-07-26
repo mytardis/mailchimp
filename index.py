@@ -155,7 +155,7 @@ for user in users:
             client.lists.get_list_member(
                 settings["mailchimp"]["list_id"],
                 hashlib.md5(email.encode("utf-8")).hexdigest())
-        except ApiClientError as e:
+        except ApiClientError:
             print("Adding %s to the list" % email)
             client.lists.add_list_member(
                 settings["mailchimp"]["list_id"],
