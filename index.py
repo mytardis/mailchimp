@@ -80,15 +80,17 @@ def get_db_users(cur, days, exclude):
         exc.append(re.compile(pattern))
 
     users = []
+    dups = []
     for row in rows:
         email = row["email_address"].strip()
-        if len(email):
+        if len(email) and email not in dups:
             keep = True
             for e in exc:
                 if bool(re.search(e, email)):
                     keep = False
                     break
             if keep:
+                dups.append(email)
                 users.append({
                     "email_address": email,
                     "first_name": row["first_name"].strip(),
@@ -132,21 +134,17 @@ cur = con.cursor(cursor_factory=RealDictCursor)
 
 print("Reading database...")
 users = get_db_users(cur, args.days, settings["exclude"])
+print("The list has %s emails." % len(users))
 
 print("Closing connection to the database...")
 cur.close()
 con.close()
 
-rsp = client.lists.get_segment(
-    settings["mailchimp"]["list_id"],
-    settings["mailchimp"]["segment_id"])
-
-print("List '%s' has %s members" % (rsp["name"], rsp["member_count"]))
-
 print("Reading list members...")
 mailchimp_emails = get_mc_members(
     settings["mailchimp"]["list_id"],
     settings["mailchimp"]["segment_id"])
+print("The list has %s emails." % len(mailchimp_emails))
 
 print("Sync...")
 
