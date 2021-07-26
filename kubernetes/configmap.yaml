@@ -18,4 +18,4 @@ data:
       segment_id: 123456
 
     exclude:
-      - @example\.com$
+      - "@example\\.com$"

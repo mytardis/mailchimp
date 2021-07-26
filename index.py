@@ -75,19 +75,25 @@ def get_db_users(cur, days, exclude):
     cur.execute(q)
     rows = cur.fetchall()
 
+    exc = []
+    for pattern in exclude:
+        exc.append(re.compile(pattern))
+
     users = []
     for row in rows:
-        keep = True
-        for exc in exclude:
-            if re.match(exc, row["email_address"]):
-                keep = False
-                break
-        if keep:
-            users.append({
-                "email_address": row["email_address"],
-                "first_name": row["first_name"],
-                "last_name": row["last_name"]
-            })
+        email = row["email_address"].strip()
+        if len(email):
+            keep = True
+            for e in exc:
+                if bool(re.search(e, email)):
+                    keep = False
+                    break
+            if keep:
+                users.append({
+                    "email_address": email,
+                    "first_name": row["first_name"].strip(),
+                    "last_name": row["last_name"].strip()
+                })
 
     return users
 
