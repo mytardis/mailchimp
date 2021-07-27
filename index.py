@@ -72,7 +72,7 @@ def get_db_users(cur, days, exclude):
         LEFT JOIN tardis_portal_userprofile AS p
         ON p.user_id = u.id
         LEFT JOIN tardis_portal_userauthentication AS a
-        ON a.userProfile_id = p.id
+        ON a."userProfile_id" = p.id
         WHERE {}
         ORDER BY LOWER(u.email)
     """).format(sql.SQL(" AND ").join(filters))
