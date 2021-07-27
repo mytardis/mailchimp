@@ -53,23 +53,28 @@ def get_mc_members(list_id, segment_id):
 
 def get_db_users(cur, days, exclude):
     filters = [
-        sql.SQL("is_active = True")
+        sql.SQL("u.is_active = True"),
+        sql.SQL("a.approved = True")
     ]
 
     if days != 0:
         rewind = datetime.now() + timedelta(-days)
         filters.append(
-            sql.SQL("last_login >= '{}'".format(rewind.date()))
+            sql.SQL("u.last_login >= '{}'".format(rewind.date()))
         )
 
     q = sql.SQL("""
         SELECT
-            LOWER(email) AS email_address,
-            first_name,
-            last_name
-        FROM auth_user
+            LOWER(u.email) AS email_address,
+            u.first_name,
+            u.last_name
+        FROM auth_user AS u
+        LEFT JOIN tardis_portal_userprofile AS p
+        ON p.user_id = u.id
+        LEFT JOIN tardis_portal_userauthentication AS a
+        ON a.userProfile_id = p.id
         WHERE {}
-        ORDER BY LOWER(email)
+        ORDER BY LOWER(u.email)
     """).format(sql.SQL(" AND ").join(filters))
 
     cur.execute(q)
